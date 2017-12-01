@@ -1,7 +1,11 @@
-class DefaultMixin:
+class DefaultHeaderMixin:
     def get_header(self, ):
-        print ("Default Mixin")
         return self.header if self.header else "DEFAULT HEADER"
+
+
+class DefaultContextMixin:
+    def get_context(self, ):
+        return self.context if self.context else ["DEFAULT CONTEXT"]
 
 
 class HeaderPrefixNo1:
