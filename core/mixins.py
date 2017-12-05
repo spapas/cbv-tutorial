@@ -8,26 +8,25 @@ class DefaultContextMixin:
         return self.context if self.context else ["DEFAULT CONTEXT"]
 
 
-class HeaderPrefixNo1:
+class HeaderPrefixMixin:
     def get_header(self, ):
-        if self.header:
-            return "PREFIX 1: " + self.header
-        return "PREFIX 1"
+        return "PREFIX: " + super().get_header()
 
 
-class HeaderPrefixNo2:
+class DefaultHeaderSuperMixin:
     def get_header(self, ):
-        return "PREFIX 2: " + super().get_header()
+        return super().get_header() if super().get_header() else "DEFAULT HEADER"
 
 
-class ContextMixin1:
+class ExtraContext1Mixin:
     def get_context(self, ):
         ctx = super().get_context()
         ctx.append('data1')
         return ctx
 
-class ContextMixin2:
+
+class ExtraContext2Mixin:
     def get_context(self, ):
         ctx = super().get_context()
-        ctx.append('data2')
+        ctx.insert(0, 'data2')
         return ctx

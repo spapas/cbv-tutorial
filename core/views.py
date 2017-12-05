@@ -123,24 +123,26 @@ class DefaultHeaderContextMixinBetterCustomClassView(mixins.DefaultHeaderMixin, 
 class JsonDefaultHeaderMixinCustomClassView(mixins.DefaultHeaderMixin, JsonCustomClassView):
     pass
 
-class HeaderPrefixNo1CustomClassView(mixins.HeaderPrefixNo1, BetterCustomClassView):
-    header = "Header 1"
+class HeaderPrefixBetterCustomClassView(mixins.HeaderPrefixMixin, BetterCustomClassView):
+    header='Hello!'
 
-class HeaderPrefixNo2CustomClassView(mixins.HeaderPrefixNo2, BetterCustomClassView):
-    header = "Header 2"
+class HeaderPrefixDefaultBetterCustomClassView(mixins.HeaderPrefixMixin, mixins.DefaultHeaderSuperMixin, BetterCustomClassView):
+    pass
 
-class HeaderPrefixNo12CustomClassView(mixins.HeaderPrefixNo1, mixins.HeaderPrefixNo2, BetterCustomClassView):
-    header = "Header 12"
+class ExtraContext12BetterCustomClassView(mixins.ExtraContext1Mixin, mixins.ExtraContext2Mixin, BetterCustomClassView):
+    pass
 
-class HeaderPrefixNo21CustomClassView(mixins.HeaderPrefixNo2, mixins.HeaderPrefixNo1, BetterCustomClassView):
-    header = "Header 21"
+class ExtraContext21BetterCustomClassView(mixins.ExtraContext2Mixin, mixins.ExtraContext1Mixin, BetterCustomClassView):
+    pass
 
-class ContextMixin12CustomClassView(mixins.ContextMixin1, mixins.ContextMixin2, BetterCustomClassView):
-    context = ['Class data']
-
-class HeaderPrefixNo1ContextMixin2CustomClassView(mixins.HeaderPrefixNo1, mixins.ContextMixin2, BetterCustomClassView):
-    header = "Better"
-    context = ['Much better']
+class AllTogetherNowBetterCustomClassView(
+        mixins.HeaderPrefixMixin,
+        mixins.DefaultHeaderSuperMixin,
+        mixins.ExtraContext1Mixin,
+        mixins.ExtraContext2Mixin,
+        BetterCustomClassView
+    ):
+    pass
 
 class HomeCustomClassView(BetterCustomClassView, ):
     def render_context(self):
