@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^header-prefix-default-bccv/$', views.HeaderPrefixDefaultBetterCustomClassView.as_view(), name='header-prefix-default-bccv'),
     url(r'extra-context-12-bccv/$', views.ExtraContext12BetterCustomClassView.as_view(), name='extra-context-12-bccv'),
     url(r'extra-context-21-bccv/$', views.ExtraContext21BetterCustomClassView.as_view(), name='extra-context-21-bccv'),
-    url(r'all-gother-now-bccv/$', views.AllTogetherNowBetterCustomClassView.as_view(), name='all-gother-now-bccv'),
+    url(r'all-together-now-bccv/$', views.AllTogetherNowBetterCustomClassView.as_view(), name='all-together-now-bccv'),
 ]
