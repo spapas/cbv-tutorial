@@ -19,7 +19,7 @@ class DjangoHomeCustomClassView(HomeCustomClassView, ):
 class DjangoBetterCustomClassView(View, ):
     header = ''
     context =''
-    
+
     def get_header(self, ):
         return self.header if self.header else ""
 
@@ -35,6 +35,10 @@ class DjangoBetterCustomClassView(View, ):
     def get(self, *args, **kwargs):
         resp = """
             <html>
+                <head>
+                    <link rel="stylesheet" href="https://unpkg.com/normalize.css@7.0.0/normalize.css" type="text/css"/>
+                    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css"/>
+                </head>
                 <body>
                     <h1>{header}</h1>
                     {body}
@@ -44,7 +48,7 @@ class DjangoBetterCustomClassView(View, ):
                 header=self.get_header(), body=self.render_context(),
             )
         return HttpResponse(resp)
-        
-        
+
+
 class DefaultHeaderContextDjangoBetterCustomClassView( DefaultHeaderMixin, DefaultContextMixin, DjangoBetterCustomClassView):
     pass
