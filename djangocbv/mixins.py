@@ -30,3 +30,20 @@ class SuccessMessagesMixin(object, ):
     def form_valid(self, form):
         messages.success(self.request, self.get_success_message())
         return super().form_valid(form)
+
+
+class AtLeastOnePermissionRequiredMixin(UserPassesTestMixin):
+    permissions = []
+
+    def test_func(self):
+        for p in permissions:
+            if self.request.user.has_perm(p):
+                return True
+        return False
+
+
+class AdminorUserPermissionRequiredMixin(AtLeastOnePermissionRequiredMixin):
+    permissions = ['app.admin', 'app.curator']
+
+
+
