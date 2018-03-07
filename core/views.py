@@ -20,6 +20,10 @@ class CustomClassView:
         print ("Custom Class View render")
         return """
             <html>
+                <head>
+                    <link rel="stylesheet" href="https://unpkg.com/normalize.css@7.0.0/normalize.css" type="text/css"/>
+                    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+                </head>
                 <body>
                     <h1>{header}</h1>
                     {body}
@@ -60,6 +64,10 @@ class BetterCustomClassView(CustomClassView, ):
         print ("Better Custom Class View render")
         return """
             <html>
+                <head>
+                    <link rel="stylesheet" href="https://unpkg.com/normalize.css@7.0.0/normalize.css" type="text/css"/>
+                    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+                </head>
                 <body>
                     <h1>{header}</h1>
                     {body}
