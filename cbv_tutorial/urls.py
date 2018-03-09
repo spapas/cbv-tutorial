@@ -16,12 +16,17 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import TemplateView
+
+class HomeTemplateView(TemplateView):
+    template_name ='home.html'
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/', LoginView.as_view(), name='login', ),
     url(r'^logout/', LogoutView.as_view(), name='logout', ),
 
-    url(r'^', include('core.urls')),
+    url(r'^$', HomeTemplateView.as_view() ),
+    url(r'^non-django-cbv/', include('core.urls')),
     url(r'^djangocbv/', include('djangocbv.urls')),
 ]

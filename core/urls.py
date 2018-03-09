@@ -4,7 +4,7 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.HomeCustomClassView.as_view(), name='home'),
+    url(r'^$', views.HomeCustomClassView.as_view(), name='home-ccv'),
     url(r'^ccv-empty/$', views.CustomClassView.as_view(), name='ccv-empty'),
     url(r'^ccv-with-values/$', views.CustomClassView.as_view(header='Hello', context=['hello', 'world', ], footer='Bye', ), name='ccv-with-values'),
     url(r'^ccv-inherits/$', views.InheritsCustomClassView.as_view(), name='ccv-inherits'),

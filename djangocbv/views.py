@@ -52,3 +52,4 @@ class DjangoBetterCustomClassView(View, ):
 
 class DefaultHeaderContextDjangoBetterCustomClassView( DefaultHeaderMixin, DefaultContextMixin, DjangoBetterCustomClassView):
     pass
+

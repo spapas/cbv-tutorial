@@ -14,15 +14,22 @@ class Category(models.Model):
 
 
 class AbstractGeneralInfo(models.Model):
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, )
     category = models.ForeignKey('category', on_delete=models.PROTECT, )
     created_on = models.DateTimeField(auto_now_add=True, )
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='%(class)s_created_by', )
     modified_on = models.DateTimeField(auto_now=True, )
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='%(class)s_modified_by', )
+    
+    owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='%(class)s_owned_by', )
     published_on = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         abstract = True
+        permissions = (
+            ("publisher_access", "Publisher Access"),
+            ("admin_access", "Admin Access"),
+        )
 
 
 class Article(AbstractGeneralInfo):

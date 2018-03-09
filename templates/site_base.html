@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/normalize.css@7.0.0/normalize.css" type="text/css"/>
+        <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+        <style>
+            .footer {
+                margin-top: 5em;
+                font-size: 0.7em;
+            }
+            
+            .error {
+                color: red;
+                border: 1px solid red;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            
+            .account {
+                float: right;
+                clear: both;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <h2>{% block title %}{% endblock %}</h1>
+            <div class='account' >
+            {% if request.user.is_authenticated %}
+                {{ request.user}} | <a href='{% url "logout" %}'>Logout</a>
+            {% else %}
+                <a href='{% url "login" %}'>Login</a>
+            {% endif %}
+            </div>
+        </header>
+        {% block content %}
+        {% endblock %}
+        <footer class='footer' >
+            <div>
+                You are at: {{ request.path }}
+            </div>
+        </footer>
+    </body>
+</html>
