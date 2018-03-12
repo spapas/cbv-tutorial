@@ -1,0 +1,15 @@
+{% extends "site_base.html" %}
+
+{% block title%}Home{% endblock %}
+{% block content %}        
+Welcome !
+
+You can visit:
+
+<ul>
+    {{ urls |safe}}
+    {% for u in urls %}
+    
+    {% endfor %}
+</ul>
+{% endblock %}

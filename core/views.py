@@ -151,16 +151,12 @@ class AllTogetherNowBetterCustomClassView(
         BetterCustomClassView
     ):
     pass
+    
 
-class HomeCustomClassView(BetterCustomClassView, ):
+class HomeCustomClassView(mixins.UrlPatternsMixin, BetterCustomClassView, ):
     def get_urlpatterns(self):
         from core.urls import urlpatterns
         return urlpatterns
 
     def render_context(self):
-        from django.urls import reverse
-        ctx = "<br />".join(
-            ['<a href="{0}">{1}</a>'.format(reverse(p.name), p.name) for p in self.get_urlpatterns()]
-        )
-        return ctx
-
+        return self.render_patterns()

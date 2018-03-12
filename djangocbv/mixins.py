@@ -45,5 +45,3 @@ class AtLeastOnePermissionRequiredMixin(UserPassesTestMixin):
 class AdminorUserPermissionRequiredMixin(AtLeastOnePermissionRequiredMixin):
     permissions = ['app.admin', 'app.curator']
 
-
-

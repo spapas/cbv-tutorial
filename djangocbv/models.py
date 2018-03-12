@@ -35,8 +35,7 @@ class AbstractGeneralInfo(models.Model):
 class Article(AbstractGeneralInfo):
     title = models.CharField(max_length=128, )
     content = models.TextField()
-
-
+    
 
 class Document(AbstractGeneralInfo):
     description = models.CharField(max_length=128, )

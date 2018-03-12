@@ -7,14 +7,25 @@ from django.views.generic.base import View
 from django.http import HttpResponse
 
 from core.views import HomeCustomClassView
-from core.mixins import DefaultHeaderMixin, DefaultContextMixin
+from django.views.generic import TemplateView, ListView, CreateView
+from core.mixins import DefaultHeaderMixin, DefaultContextMixin, UrlPatternsMixin
+
+from .models import Article, Category, Document
+from .forms import ArticleForm
 
 
-class DjangoHomeCustomClassView(HomeCustomClassView, ):
+class DjangoHomeCustomClassView(UrlPatternsMixin, TemplateView, ):
+    template_name = 'django_cbv_home.html'
+    
     def get_urlpatterns(self):
         from djangocbv.urls import urlpatterns
         return urlpatterns
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['urls'] = self.render_patterns()
+        return context
+        
 
 class DjangoBetterCustomClassView(View, ):
     header = ''
@@ -53,3 +64,11 @@ class DjangoBetterCustomClassView(View, ):
 class DefaultHeaderContextDjangoBetterCustomClassView( DefaultHeaderMixin, DefaultContextMixin, DjangoBetterCustomClassView):
     pass
 
+
+class ArticleListView(ListView):
+    model = Article
+    
+    
+class ArticleCreateView(CreateView):
+    model = Article    
+    form_class = ArticleForm
