@@ -19,6 +19,19 @@ class LimitAccessMixin:
         if self.request.user.has_perm('djangocbv.admin_access') or self.request.user.has_perm('djangocbv.publisher_access') :
             return qs
         return qs.filter(created_by=self.request.user)
+        
+        
+class ModerationMixin:
+    def form_valid(self, form):
+        redirect_to = super().form_valid(form)
+        if self.object.status != 'REMOVED':
+            if self.request.user.has_perm('spots.publisher_access'):
+                self.object.status = 'PUBLISHED'
+            else:
+                self.object.status = 'DRAFT'
+            self.object.save()
+            
+        return redirect_to        
 
 
 class SetInitialMixin(object,):

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
 from django.views.generic.base import View
 
 from core.views import HomeCustomClassView
@@ -19,17 +19,17 @@ from .mixins import *
 
 class DjangoHomeCustomClassView(UrlPatternsMixin, TemplateView, ):
     template_name = 'django_cbv_home.html'
-    
+
     def get_urlpatterns(self):
         from djangocbv.urls import urlpatterns
-        
+
         return [ p for p in urlpatterns if ':' not in p.pattern.describe()]
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['urls'] = self.render_patterns()
         return context
-        
+
 
 class DjangoBetterCustomClassView(View, ):
     header = ''
@@ -72,43 +72,53 @@ class DefaultHeaderContextDjangoBetterCustomClassView(DefaultHeaderMixin, Defaul
 class ArticleListView(ExportCsvMixin, ListView):
     model = Article
     context_object_name = 'articles'
-    
-    
-class ArticleCreateView(CreateSuccessMessageMixin, 
-                        RedirectToHomeMixin, 
-                        AuditableMixin, 
-                        SetOwnerIfNeeded, 
-                        RequestArgMixin, 
-                        SetInitialMixin, 
-                        LoginRequiredMixin, 
+
+
+class ArticleCreateView(CreateSuccessMessageMixin,
+                        RedirectToHomeMixin,
+                        AuditableMixin,
+                        SetOwnerIfNeeded,
+                        RequestArgMixin,
+                        SetInitialMixin,
+                        ModerationMixin,
+                        LoginRequiredMixin,
                         CreateView):
-    model = Article    
+    model = Article
     form_class = ArticleForm
-    
-    
-class ArticleUpdateView(UpdateSuccessMessageMixin, 
-                        RedirectToHomeMixin, 
-                        AuditableMixin, 
-                        SetOwnerIfNeeded, 
-                        RequestArgMixin, 
-                        SetInitialMixin, 
-                        LoginRequiredMixin, 
+
+
+class ArticleUpdateView(UpdateSuccessMessageMixin,
+                        RedirectToHomeMixin,
+                        AuditableMixin,
+                        SetOwnerIfNeeded,
+                        RequestArgMixin,
+                        SetInitialMixin,
+                        ModerationMixin,
+                        LoginRequiredMixin,
                         UpdateView):
-    model = Article    
+    model = Article
     form_class = ArticleForm
     
+class ArticleDetailView(DetailView):
+    model = Article
+    context_object_name = 'article'
     
-    
+    def get_template_names(self):
+        if self.request.is_ajax() or self.request.GET.get('partial'):
+            return 'djangocbv/_article_content_partial.html'
+        return super().get_template_names()
+
+
 class CategoryListView(ExportCsvMixin, ListView):
     model = Category
     context_object_name = 'categories'
-    
-    
+
+
 class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
-    model = Category    
+    model = Category
     fields = ['name']
-    
+
 
 class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
-    model = Category    
-    fields = ['name']    
+    model = Category
+    fields = ['name']

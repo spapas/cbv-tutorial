@@ -10,21 +10,46 @@
 <table>
     <thead>
         <tr>
+            <th>Id</th>
+            <th>View</th>
             <th>Edit</th>
             <th>Title</th>
+            <th>Status</th>
             <th>Content</th>
+            <th>Owner</th>
         </tr>
     </thead>
     <tbody>
         {% for article in articles %}
             <tr>
         
-                <td><a href='{% url "article-update" article.id %}'>{{ article.id }}</a></td>
+                <td>{{ article.id }}</td>
+                <td><a href='{% url "article-detail" article.id %}'>View</a></td>
+                <td><a href='{% url "article-update" article.id %}'>Edit</a></td>
                 <td>{{ article.title }}</td>
-                <td>{{ article.content|truncatewords:20 }}</td>
+                <td>{{ article.get_status_display }}</td>
+                <td>
+                    {{ article.content|truncatewords:20 }}
+                    <button id='moreButton' onclick='showMore({{article.id}})'>More</button>
+                </td>
+                <td>{{ article.owned_by }}</td>
             </tr>
         {% endfor %}
     <tbody>
 </table>
 
+{% endblock %}
+
+{% block extra_script %}
+    <script>
+        var showMore = function(id) {
+            console.log("SHOW MORE ", id);
+            fetch('/djangocbv/articles/detail/' + id +'/?partial=true').then(function(response) {
+                return response.text().then(function(text) {
+                    alert(text)
+                });
+            })
+        }
+        
+    </script>
 {% endblock %}

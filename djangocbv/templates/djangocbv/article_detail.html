@@ -1,0 +1,17 @@
+{% extends "site_base.html" %}
+
+{% block title%}Article detail{% endblock %}
+{% block content %}        
+
+<h2>{{ article.title }}</h2>
+
+{{ article.status }}
+<br />
+{{ article.owned_by }} {% if published %} at {{ article.published_on}} {% endif %} 
+
+{% include "djangocbv/_article_content_partial.html" %}
+
+
+
+
+{% endblock %}
