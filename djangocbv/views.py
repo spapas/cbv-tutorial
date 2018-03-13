@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import TemplateView, ListView, CreateView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from django.views.generic.base import View
 
 from core.views import HomeCustomClassView
@@ -22,7 +22,8 @@ class DjangoHomeCustomClassView(UrlPatternsMixin, TemplateView, ):
     
     def get_urlpatterns(self):
         from djangocbv.urls import urlpatterns
-        return urlpatterns
+        
+        return [ p for p in urlpatterns if ':' not in p.pattern.describe()]
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,8 +69,9 @@ class DefaultHeaderContextDjangoBetterCustomClassView(DefaultHeaderMixin, Defaul
     pass
 
 
-class ArticleListView(ListView):
+class ArticleListView(ExportCsvMixin, ListView):
     model = Article
+    context_object_name = 'articles'
     
     
 class ArticleCreateView(CreateSuccessMessageMixin, 
@@ -91,15 +93,22 @@ class ArticleUpdateView(UpdateSuccessMessageMixin,
                         RequestArgMixin, 
                         SetInitialMixin, 
                         LoginRequiredMixin, 
-                        CreateView):
+                        UpdateView):
     model = Article    
     form_class = ArticleForm
     
     
-class CategoryListView(ListView):
+    
+class CategoryListView(ExportCsvMixin, ListView):
     model = Category
+    context_object_name = 'categories'
     
     
 class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
     model = Category    
     fields = ['name']
+    
+
+class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
+    model = Category    
+    fields = ['name']    

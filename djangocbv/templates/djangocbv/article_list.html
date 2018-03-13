@@ -3,7 +3,28 @@
 {% block title%}Article list{% endblock %}
 {% block content %}        
 
+<p>
+    <a class='button' href='?csv=true'>Export csv</a>
+</p>
 
-{{ object_list }}
+<table>
+    <thead>
+        <tr>
+            <th>Edit</th>
+            <th>Title</th>
+            <th>Content</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for article in articles %}
+            <tr>
+        
+                <td><a href='{% url "article-update" article.id %}'>{{ article.id }}</a></td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.content|truncatewords:20 }}</td>
+            </tr>
+        {% endfor %}
+    <tbody>
+</table>
 
 {% endblock %}
