@@ -23,8 +23,8 @@ class HomeTemplateView(TemplateView):
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^login/', LoginView.as_view(), name='login', ),
-    url(r'^logout/', LogoutView.as_view(), name='logout', ),
+    url(r'^accounts/login/', LoginView.as_view(), name='login', ),
+    url(r'^accounts/logout/', LogoutView.as_view(), name='logout', ),
 
     url(r'^$', HomeTemplateView.as_view() ),
     url(r'^non-django-cbv/', include('core.urls')),

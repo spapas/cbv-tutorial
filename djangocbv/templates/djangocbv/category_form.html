@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 
-{% block title%}Article form{% endblock %}
+{% block title%}Category form{% endblock %}
 {% block content %}        
 
 <form method='POST' >
@@ -8,4 +8,5 @@
     {% csrf_token %}
     <input type='submit' value='Ok'>
 </form>
+
 {% endblock %}

@@ -11,6 +11,15 @@ STATUS_CHOICES = (
 
 class Category(models.Model):
     name = models.CharField(max_length=128, )
+    
+    def __str__(self):
+        return self.name
+        
+    class Meta:
+        permissions = (
+            ("publisher_access", "Publisher Access"),
+            ("admin_access", "Admin Access"),
+        )
 
 
 class AbstractGeneralInfo(models.Model):
@@ -26,10 +35,6 @@ class AbstractGeneralInfo(models.Model):
 
     class Meta:
         abstract = True
-        permissions = (
-            ("publisher_access", "Publisher Access"),
-            ("admin_access", "Admin Access"),
-        )
 
 
 class Article(AbstractGeneralInfo):

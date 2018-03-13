@@ -1,3 +1,7 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.urls import reverse
+
 class AuditableMixin:
     def form_valid(self, form, ):
         if not form.instance.created_by:
@@ -32,16 +36,31 @@ class SuccessMessagesMixin(object, ):
         return super().form_valid(form)
 
 
-class AtLeastOnePermissionRequiredMixin(UserPassesTestMixin):
+class AnyPermissionRequiredMixin(UserPassesTestMixin):
     permissions = []
 
     def test_func(self):
-        for p in permissions:
+        for p in self.permissions:
             if self.request.user.has_perm(p):
                 return True
         return False
 
 
-class AdminorUserPermissionRequiredMixin(AtLeastOnePermissionRequiredMixin):
-    permissions = ['app.admin', 'app.curator']
+class AdminOrPublisherPermissionRequiredMixin(AnyPermissionRequiredMixin):
+    permissions = ['app.admin', 'app.publisher']
 
+
+class RequestArgMixin:
+    def get_form_kwargs(self):
+        kwargs = super(RequestArgMixin, self).get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs   
+        
+
+class RedirectToHomeMixin:
+    def get_success_url(self):
+        return reverse('home_django')
+        
+        
+class CreateSuccessMessageMixin(SuccessMessagesMixin):
+    success_message = 'Object successfully created!'

@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <html>
     <head>
         <link rel="stylesheet" href="https://unpkg.com/normalize.css@7.0.0/normalize.css" type="text/css"/>
@@ -19,18 +20,24 @@
                 float: right;
                 clear: both;
             }
+            
+            .success {
+                color: green;
+                border: 1px solid green;
+                border-radius: 5px;
+                padding: 5px;
+                clear: both;
+                list-style-type: none;
+            }
         </style>
     </head>
     <body>
         <header class="header">
             <h2>{% block title %}{% endblock %}</h1>
-            <div class='account' >
-            {% if request.user.is_authenticated %}
-                {{ request.user}} | <a href='{% url "logout" %}'>Logout</a>
-            {% else %}
-                <a href='{% url "login" %}'>Login</a>
-            {% endif %}
-            </div>
+
+            {% include '_partial_account.html' %}
+            {% include '_partial_messages.html' %}
+            
         </header>
         {% block content %}
         {% endblock %}

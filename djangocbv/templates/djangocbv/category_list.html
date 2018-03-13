@@ -1,0 +1,11 @@
+{% extends "site_base.html" %}
+
+{% block title%}Category list{% endblock %}
+{% block content %}        
+
+
+{% for cat in object_list %}
+    
+    {{ cat.name }} - <a href='{% url "article-create" %}?category={{ cat.id }}' >Add article</a> <br />
+{% endfor %}
+{% endblock %}

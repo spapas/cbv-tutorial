@@ -1,0 +1,12 @@
+
+<div class='account' >
+    {% if request.user.is_authenticated %}
+        {{ request.user }} (is 
+            {% if perms.djangocbv.admin_access %}admin{% elif  perms.djangocbv.publisher_access %}publisher{% else %}user{% endif %}
+        )
+        
+        | <a href='{% url "logout" %}'>Logout</a>
+    {% else %}
+        <a href='{% url "login" %}'>Login</a>
+    {% endif %}
+</div>

@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.generic import TemplateView, ListView, CreateView
 from django.views.generic.base import View
-from django.http import HttpResponse
 
 from core.views import HomeCustomClassView
-from django.views.generic import TemplateView, ListView, CreateView
+
 from core.mixins import DefaultHeaderMixin, DefaultContextMixin, UrlPatternsMixin
 
 from .models import Article, Category, Document
 from .forms import ArticleForm
+from .mixins import *
+
 
 
 class DjangoHomeCustomClassView(UrlPatternsMixin, TemplateView, ):
@@ -69,6 +72,15 @@ class ArticleListView(ListView):
     model = Article
     
     
-class ArticleCreateView(CreateView):
+class ArticleCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AuditableMixin, RequestArgMixin, SetInitialMixin, LoginRequiredMixin, CreateView):
     model = Article    
     form_class = ArticleForm
+    
+    
+class CategoryListView(ListView):
+    model = Category
+    
+    
+class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
+    model = Category    
+    fields = ['name']
