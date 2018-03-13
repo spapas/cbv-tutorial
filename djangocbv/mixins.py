@@ -1,6 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse
 from django.urls import reverse
+import csv
 
 
 class AuditableMixin:
@@ -69,6 +71,23 @@ class CreateSuccessMessageMixin(SuccessMessagesMixin):
 
 class UpdateSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully updated!'
+
+
+class ExportCsvMixin:
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get('csv'):
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="export.csv"'
+
+            writer = csv.writer(response)
+            for idx, o in enumerate(context['object_list']):
+                if idx == 0: # Write headers
+                    writer.writerow(k for (k,v) in o.__dict__.items() if not k.startswith('_'))
+                writer.writerow(v for (k,v) in o.__dict__.items() if not k.startswith('_'))
+
+            return response
+        return super().render_to_response(context, **response_kwargs)
+
 
 
 class SetOwnerIfNeeded:
