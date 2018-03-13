@@ -18,6 +18,10 @@
             
             .account {
                 float: right;
+            
+            }
+            
+            .clarify {
                 clear: both;
             }
             
@@ -26,7 +30,6 @@
                 border: 1px solid green;
                 border-radius: 5px;
                 padding: 5px;
-                clear: both;
                 list-style-type: none;
             }
         </style>
@@ -36,6 +39,7 @@
             <h2>{% block title %}{% endblock %}</h1>
 
             {% include '_partial_account.html' %}
+            <div class='clarify'></div>
             {% include '_partial_messages.html' %}
             
         </header>

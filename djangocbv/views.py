@@ -64,7 +64,7 @@ class DjangoBetterCustomClassView(View, ):
         return HttpResponse(resp)
 
 
-class DefaultHeaderContextDjangoBetterCustomClassView( DefaultHeaderMixin, DefaultContextMixin, DjangoBetterCustomClassView):
+class DefaultHeaderContextDjangoBetterCustomClassView(DefaultHeaderMixin, DefaultContextMixin, DjangoBetterCustomClassView):
     pass
 
 
@@ -72,7 +72,26 @@ class ArticleListView(ListView):
     model = Article
     
     
-class ArticleCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AuditableMixin, RequestArgMixin, SetInitialMixin, LoginRequiredMixin, CreateView):
+class ArticleCreateView(CreateSuccessMessageMixin, 
+                        RedirectToHomeMixin, 
+                        AuditableMixin, 
+                        SetOwnerIfNeeded, 
+                        RequestArgMixin, 
+                        SetInitialMixin, 
+                        LoginRequiredMixin, 
+                        CreateView):
+    model = Article    
+    form_class = ArticleForm
+    
+    
+class ArticleUpdateView(UpdateSuccessMessageMixin, 
+                        RedirectToHomeMixin, 
+                        AuditableMixin, 
+                        SetOwnerIfNeeded, 
+                        RequestArgMixin, 
+                        SetInitialMixin, 
+                        LoginRequiredMixin, 
+                        CreateView):
     model = Article    
     form_class = ArticleForm
     

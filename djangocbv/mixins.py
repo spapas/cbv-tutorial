@@ -2,9 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse
 
+
 class AuditableMixin:
     def form_valid(self, form, ):
-        if not form.instance.created_by:
+        if not form.instance.created_by_id:
             form.instance.created_by = self.request.user
         form.instance.modified_by = self.request.user
         return super().form_valid(form)
@@ -13,7 +14,7 @@ class AuditableMixin:
 class LimitAccessMixin:
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.user.is_superuser:
+        if self.request.user.has_perm('djangocbv.admin_access') or self.request.user.has_perm('djangocbv.publisher_access') :
             return qs
         return qs.filter(created_by=self.request.user)
 
@@ -47,20 +48,31 @@ class AnyPermissionRequiredMixin(UserPassesTestMixin):
 
 
 class AdminOrPublisherPermissionRequiredMixin(AnyPermissionRequiredMixin):
-    permissions = ['app.admin', 'app.publisher']
+    permissions = ['djangocbv.admin_access', 'djangocbv.publisher_access']
 
 
 class RequestArgMixin:
     def get_form_kwargs(self):
         kwargs = super(RequestArgMixin, self).get_form_kwargs()
         kwargs.update({'request': self.request})
-        return kwargs   
-        
+        return kwargs
+
 
 class RedirectToHomeMixin:
     def get_success_url(self):
         return reverse('home_django')
-        
-        
+
+
 class CreateSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully created!'
+
+
+class UpdateSuccessMessageMixin(SuccessMessagesMixin):
+    success_message = 'Object successfully updated!'
+
+
+class SetOwnerIfNeeded:
+    def form_valid(self, form, ):
+        if not form.instance.owned_by_id:
+            form.instance.owned_by = self.request.user
+        return super().form_valid(form)
