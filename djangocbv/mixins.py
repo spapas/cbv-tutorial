@@ -22,17 +22,23 @@ class LimitAccessMixin:
         return qs.filter(owned_by=self.request.user)
 
 
+class HideRemovedMixin:
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.has_perm('djangocbv.admin_access') or self.request.user.has_perm('djangocbv.publisher_access') :
+            return qs
+        return qs.exclude(status='REMOVED')
+
+
 class ModerationMixin:
     def form_valid(self, form):
-        redirect_to = super().form_valid(form)
         if self.object.status != 'REMOVED':
-            if self.request.user.has_perm('spots.publisher_access'):
+            if self.request.user.has_perm('djangocbv.publisher_access') or self.request.user.has_perm('djangocbv.admin_access'):
                 self.object.status = 'PUBLISHED'
             else:
                 self.object.status = 'DRAFT'
-            self.object.save()
 
-        return redirect_to
+        return super().form_valid(form)
 
 
 class SetInitialMixin(object,):
@@ -79,6 +85,16 @@ class RedirectToHomeMixin:
         return reverse('home_django')
 
 
+class RedirectToArticlesMixin:
+    def get_success_url(self):
+        return reverse('article-list')
+
+
+class RedirectToDocumentsMixin:
+    def get_success_url(self):
+        return reverse('document-list')
+
+
 class CreateSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully created!'
 
@@ -89,6 +105,10 @@ class UpdateSuccessMessageMixin(SuccessMessagesMixin):
 
 class RemoveSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully removed!'
+
+
+class UnpublishSuccessMessageMixin(SuccessMessagesMixin):
+    success_message = 'Object successfully unpublished!'
 
 
 class ExportCsvMixin:
@@ -107,7 +127,6 @@ class ExportCsvMixin:
         return super().render_to_response(context, **response_kwargs)
 
 
-
 class SetOwnerIfNeeded:
     def form_valid(self, form, ):
         if not form.instance.owned_by_id:
@@ -121,8 +140,13 @@ class RemoveMixin:
         return super().form_valid(form)
 
 
+class UnpublishMixin:
+    def form_valid(self, form, ):
+        form.instance.status = 'DRAFT'
+        return super().form_valid(form)
+
+
 class ContentCreateMixin(CreateSuccessMessageMixin,
-                        RedirectToHomeMixin,
                         AuditableMixin,
                         SetOwnerIfNeeded,
                         RequestArgMixin,
@@ -133,7 +157,6 @@ class ContentCreateMixin(CreateSuccessMessageMixin,
 
 
 class ContentUpdateMixin(UpdateSuccessMessageMixin,
-                        RedirectToHomeMixin,
                         AuditableMixin,
                         SetOwnerIfNeeded,
                         RequestArgMixin,
@@ -144,10 +167,22 @@ class ContentUpdateMixin(UpdateSuccessMessageMixin,
     pass
 
 
+class ContentListMixin(ExportCsvMixin, HideRemovedMixin, ):
+    pass
+
+
 class ContentRemoveMixin(AdminOrPublisherPermissionRequiredMixin,
-                         RedirectToHomeMixin,
                          AuditableMixin,
                          RemoveSuccessMessageMixin,
+                         HideRemovedMixin,
                          RemoveMixin,):
+    http_method_names = ['post',]
+    fields = []
+
+
+class ContentUnpublishMixin(AdminOrPublisherPermissionRequiredMixin,
+                         AuditableMixin,
+                         UnpublishSuccessMessageMixin,
+                         UnpublishMixin,):
     http_method_names = ['post',]
     fields = []

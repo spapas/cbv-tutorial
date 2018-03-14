@@ -1,6 +1,27 @@
 {% extends "site_base.html" %}
 
 {% block title%}Article list{% endblock %}
+{% block extra_style%}
+<style>
+    form {
+        display: inline;
+        margin-bottom: 0em;
+        
+    }
+    
+    input[type="submit"] {
+        white-space: nowrap;
+        background-color: #2c8898;
+        color: #f9f9f9;
+        border-radius: 1px;
+        border: 1px solid #2c8898;
+        font-family: serif;
+        padding: 5px 10px;
+    }
+    
+    
+</style>
+{% endblock %}
 {% block content %}        
 
 <p>
@@ -27,7 +48,12 @@
                 <td>
                     <a class='button' href='{% url "article-detail" article.id %}'>View</a>
                     <a class='button' href='{% url "article-update" article.id %}'>Edit</a>
-                    <form method='POST' action='{% url "article-remove" article.id %}'>{% csrf_token %}<input class='button' type='submit' value='Remove'></input></form>
+                    {% if article.status == 'DRAFT' %}
+                        <form method='POST' action='{% url "article-remove" article.id %}'>{% csrf_token %}<input class='button' type='submit' value='Remove'></input></form>
+                    {% endif %}
+                    {% if article.status != 'DRAFT' %}
+                        <form method='POST' action='{% url "article-unpublish" article.id %}'>{% csrf_token %}<input class='button' type='submit' value='Make draft'></input></form>
+                    {% endif %}
                 </td>
                 <td>{{ article.title }}</td>
                 <td>{{ article.get_status_display }}</td>

@@ -67,21 +67,21 @@ class DefaultHeaderContextDjangoBetterCustomClassView(DefaultHeaderMixin, Defaul
     pass
 
 
-class ArticleListView(ExportCsvMixin, ListView):
+class ArticleListView(ContentListMixin, ListView):
     model = Article
     context_object_name = 'articles'
 
 
-class ArticleCreateView(ContentCreateMixin, CreateView):
+class ArticleCreateView(ContentCreateMixin, RedirectToArticlesMixin, CreateView):
     model = Article
     form_class = ArticleForm
 
 
-class ArticleUpdateView(ContentUpdateMixin, UpdateView):
+class ArticleUpdateView(ContentUpdateMixin, RedirectToArticlesMixin, UpdateView):
     model = Article
     form_class = ArticleForm
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(HideRemovedMixin, DetailView):
     model = Article
     context_object_name = 'article'
 
@@ -91,7 +91,11 @@ class ArticleDetailView(DetailView):
         return super().get_template_names()
 
 
-class ArticleRemoveView(ContentRemoveMixin, UpdateView):
+class ArticleRemoveView(ContentRemoveMixin, RedirectToArticlesMixin, UpdateView):
+    model = Article
+    
+    
+class ArticleUnpublishView(ContentUnpublishMixin, RedirectToArticlesMixin, UpdateView):
     model = Article
 
 
@@ -110,25 +114,29 @@ class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOr
     fields = ['name']
 
 
-class DocumentListView(ExportCsvMixin, ListView):
+class DocumentListView(ContentListMixin, ListView):
     model = Document
     context_object_name = 'documents'
 
 
-class DocumentCreateView(ContentCreateMixin, CreateView):
+class DocumentCreateView(ContentCreateMixin, RedirectToDocumentsMixin, CreateView):
     model = Document
     form_class = DocumentForm
 
 
-class DocumentUpdateView(ContentUpdateMixin, UpdateView):
+class DocumentUpdateView(ContentUpdateMixin, RedirectToDocumentsMixin, UpdateView):
     model = Document
     form_class = DocumentForm
 
 
-class DocumentDetailView(DetailView):
+class DocumentDetailView(HideRemovedMixin, DetailView):
     model = Document
     context_object_name = 'document'
 
 
-class DocumentRemoveView(ContentRemoveMixin, UpdateView):
+class DocumentRemoveView(ContentRemoveMixin, RedirectToDocumentsMixin, UpdateView):
+    model = Document
+    
+    
+class DocumentUnpublishView(ContentUnpublishMixin, RedirectToDocumentsMixin, UpdateView):
     model = Document
