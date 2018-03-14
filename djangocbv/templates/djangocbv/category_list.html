@@ -13,7 +13,7 @@
         <tr>
             <th>Edit</th>
             <th>Title</th>
-            <th>Add article</th>
+            <th>Add</th>
         </tr>
     </thead>
     <tbody>
@@ -22,7 +22,11 @@
         
                 <td><a href='{% url "category-update" cat.id %}'>{{ cat.id }}</a></td>
                 <td>{{ cat.name }}</td>
-                <td><a href='{% url "article-create" %}?category={{ cat.id }}' >Add article</a></td>
+                <td>
+                    <a href='{% url "article-create" %}?category={{ cat.id }}' >Article</a>
+                    |
+                    <a href='{% url "document-create" %}?category={{ cat.id }}' >Document</a>
+                </td>
             </tr>
         {% endfor %}
     <tbody>

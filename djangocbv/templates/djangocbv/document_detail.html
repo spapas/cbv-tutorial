@@ -1,0 +1,18 @@
+{% extends "site_base.html" %}
+
+{% block title%}Document detail{% endblock %}
+{% block content %}        
+
+<h2>{{ document.description }}</h2>
+
+{{ document.status }}
+<br />
+{{ document.owned_by }} {% if published %} at {{ document.published_on}} {% endif %} 
+<p>
+    <a class='button' href='{{ document.file.url }}'>Download</a>
+</p>
+
+
+
+
+{% endblock %}

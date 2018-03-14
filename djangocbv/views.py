@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
@@ -12,9 +11,8 @@ from core.views import HomeCustomClassView
 from core.mixins import DefaultHeaderMixin, DefaultContextMixin, UrlPatternsMixin
 
 from .models import Article, Category, Document
-from .forms import ArticleForm
+from .forms import ArticleForm, DocumentForm
 from .mixins import *
-
 
 
 class DjangoHomeCustomClassView(UrlPatternsMixin, TemplateView, ):
@@ -74,39 +72,27 @@ class ArticleListView(ExportCsvMixin, ListView):
     context_object_name = 'articles'
 
 
-class ArticleCreateView(CreateSuccessMessageMixin,
-                        RedirectToHomeMixin,
-                        AuditableMixin,
-                        SetOwnerIfNeeded,
-                        RequestArgMixin,
-                        SetInitialMixin,
-                        ModerationMixin,
-                        LoginRequiredMixin,
-                        CreateView):
+class ArticleCreateView(ContentCreateMixin, CreateView):
     model = Article
     form_class = ArticleForm
 
 
-class ArticleUpdateView(UpdateSuccessMessageMixin,
-                        RedirectToHomeMixin,
-                        AuditableMixin,
-                        SetOwnerIfNeeded,
-                        RequestArgMixin,
-                        SetInitialMixin,
-                        ModerationMixin,
-                        LoginRequiredMixin,
-                        UpdateView):
+class ArticleUpdateView(ContentUpdateMixin, UpdateView):
     model = Article
     form_class = ArticleForm
-    
+
 class ArticleDetailView(DetailView):
     model = Article
     context_object_name = 'article'
-    
+
     def get_template_names(self):
         if self.request.is_ajax() or self.request.GET.get('partial'):
             return 'djangocbv/_article_content_partial.html'
         return super().get_template_names()
+
+
+class ArticleRemoveView(ContentRemoveMixin, UpdateView):
+    model = Article
 
 
 class CategoryListView(ExportCsvMixin, ListView):
@@ -122,3 +108,27 @@ class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOr
 class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
     model = Category
     fields = ['name']
+
+
+class DocumentListView(ExportCsvMixin, ListView):
+    model = Document
+    context_object_name = 'documents'
+
+
+class DocumentCreateView(ContentCreateMixin, CreateView):
+    model = Document
+    form_class = DocumentForm
+
+
+class DocumentUpdateView(ContentUpdateMixin, UpdateView):
+    model = Document
+    form_class = DocumentForm
+
+
+class DocumentDetailView(DetailView):
+    model = Document
+    context_object_name = 'document'
+
+
+class DocumentRemoveView(ContentRemoveMixin, UpdateView):
+    model = Document

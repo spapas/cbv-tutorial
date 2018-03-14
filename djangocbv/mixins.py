@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
 
 
@@ -18,9 +19,9 @@ class LimitAccessMixin:
         qs = super().get_queryset()
         if self.request.user.has_perm('djangocbv.admin_access') or self.request.user.has_perm('djangocbv.publisher_access') :
             return qs
-        return qs.filter(created_by=self.request.user)
-        
-        
+        return qs.filter(owned_by=self.request.user)
+
+
 class ModerationMixin:
     def form_valid(self, form):
         redirect_to = super().form_valid(form)
@@ -30,8 +31,8 @@ class ModerationMixin:
             else:
                 self.object.status = 'DRAFT'
             self.object.save()
-            
-        return redirect_to        
+
+        return redirect_to
 
 
 class SetInitialMixin(object,):
@@ -86,6 +87,10 @@ class UpdateSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully updated!'
 
 
+class RemoveSuccessMessageMixin(SuccessMessagesMixin):
+    success_message = 'Object successfully removed!'
+
+
 class ExportCsvMixin:
     def render_to_response(self, context, **response_kwargs):
         if self.request.GET.get('csv'):
@@ -108,3 +113,41 @@ class SetOwnerIfNeeded:
         if not form.instance.owned_by_id:
             form.instance.owned_by = self.request.user
         return super().form_valid(form)
+
+
+class RemoveMixin:
+    def form_valid(self, form, ):
+        form.instance.status = 'REMOVED'
+        return super().form_valid(form)
+
+
+class ContentCreateMixin(CreateSuccessMessageMixin,
+                        RedirectToHomeMixin,
+                        AuditableMixin,
+                        SetOwnerIfNeeded,
+                        RequestArgMixin,
+                        SetInitialMixin,
+                        ModerationMixin,
+                        LoginRequiredMixin):
+    pass
+
+
+class ContentUpdateMixin(UpdateSuccessMessageMixin,
+                        RedirectToHomeMixin,
+                        AuditableMixin,
+                        SetOwnerIfNeeded,
+                        RequestArgMixin,
+                        SetInitialMixin,
+                        ModerationMixin,
+                        LimitAccessMixin,
+                        LoginRequiredMixin):
+    pass
+
+
+class ContentRemoveMixin(AdminOrPublisherPermissionRequiredMixin,
+                         RedirectToHomeMixin,
+                         AuditableMixin,
+                         RemoveSuccessMessageMixin,
+                         RemoveMixin,):
+    http_method_names = ['post',]
+    fields = []

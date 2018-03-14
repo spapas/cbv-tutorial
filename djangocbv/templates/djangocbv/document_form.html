@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+
+{% block title%}Document form{% endblock %}
+{% block content %}        
+
+<form method='POST' enctype="multipart/form-data">
+    {{ form }}
+    {% csrf_token %}
+    <br />
+    <input type='submit' value='Ok'>
+</form>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 
-{% block title%}Article list{% endblock %}
+{% block title%}Document list{% endblock %}
 {% block content %}        
 
 <p>
@@ -14,29 +14,26 @@
             <th>Control</th>
             <th>Title</th>
             <th>Status</th>
-            <th>Content</th>
             <th>Category</th>
             <th>Owner</th>
+            <th>File</th>
         </tr>
     </thead>
     <tbody>
-        {% for article in articles %}
+        {% for doc in documents %}
             <tr>
         
-                <td>{{ article.id }}</td>
+                <td>{{ doc.id }}</td>
                 <td>
-                    <a class='button' href='{% url "article-detail" article.id %}'>View</a>
-                    <a class='button' href='{% url "article-update" article.id %}'>Edit</a>
-                    <form method='POST' action='{% url "article-remove" article.id %}'>{% csrf_token %}<input class='button' type='submit' value='Remove'></input></form>
+                    <a class='button' href='{% url "document-detail" doc.id %}'>View</a>
+                    <a class='button' href='{% url "document-update" doc.id %}'>Edit</a>
+                    <form method='POST' action='{% url "document-remove" doc.id %}'>{% csrf_token %}<input class='button' type='submit' value='Remove'></input></form>
                 </td>
-                <td>{{ article.title }}</td>
-                <td>{{ article.get_status_display }}</td>
-                <td>
-                    {{ article.content|truncatewords:20 }}
-                    <button id='moreButton' onclick='showMore({{article.id}})'>More</button>
-                </td>
-                <td>{{ article.category }}</td>
-                <td>{{ article.owned_by }}</td>
+                <td>{{ doc.description }}</td>
+                <td>{{ doc.get_status_display }}</td>
+                <td>{{ doc.category }}</td>
+                <td>{{ doc.owned_by }}</td>
+                <td><a href='{{ doc.file.url }}'>{{ doc.file }}</a></td>
             </tr>
         {% endfor %}
     <tbody>

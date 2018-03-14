@@ -10,6 +10,19 @@ class ArticleForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        
+
+        if not self.request.user.has_perm('djangocbv.admin_access'):
+            self.fields.pop('owned_by')
+
+
+class DocumentForm(ModelForm):
+    class Meta:
+        model = Document
+        fields = ['category', 'description', 'file', 'owned_by', ]
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
         if not self.request.user.has_perm('djangocbv.admin_access'):
             self.fields.pop('owned_by')
