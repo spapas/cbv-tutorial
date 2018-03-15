@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
-from django.urls import path
+
+from django.urls import path, re_path
 from django.contrib import admin
 
 from . import views
@@ -26,4 +26,7 @@ urlpatterns = [
     path('categories/', views.CategoryListView.as_view(), name='category-list'),
     path('categories/create/', views.CategoryCreateView.as_view(), name='category-create'),
     path('categories/update/<int:pk>/', views.CategoryUpdateView.as_view(), name='category-update'),
+    
+    re_path(r'^show/(?P<what>help|about)/', views.DynamicTemplateView.as_view(), name='template-show'),
+    
 ]

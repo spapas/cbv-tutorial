@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db.models import Count
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
 from django.views.generic.base import View
 
@@ -148,3 +148,10 @@ class DocumentRemoveView(ContentRemoveMixin, RedirectToDocumentsMixin, UpdateVie
 
 class DocumentUnpublishView(ContentUnpublishMixin, RedirectToDocumentsMixin, UpdateView):
     model = Document
+
+    
+class DynamicTemplateView(TemplateView):
+    def get_template_names(self):
+        what = self.kwargs['what']
+        return '{0}.html'.format(what)
+        

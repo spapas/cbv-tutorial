@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^accounts/login/', LoginView.as_view(), name='login', ),
     url(r'^accounts/logout/', LogoutView.as_view(), name='logout', ),
 
-    url(r'^$', HomeTemplateView.as_view() ),
+    url(r'^$', HomeTemplateView.as_view(), name='home', ),
     url(r'^non-django-cbv/', include('core.urls')),
     url(r'^djangocbv/', include('djangocbv.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

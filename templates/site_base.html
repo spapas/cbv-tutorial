@@ -39,7 +39,11 @@
     <body>
         <header class="header">
             <h2>{% block title %}{% endblock %}</h1>
-
+            <a href='{% url "home" %}'>Home</a>
+            | 
+            <a href='{% url "template-show" "help" %}'>Help</a>
+            |
+            <a href='{% url "template-show" "about" %}'>About</a>
             {% include '_partial_account.html' %}
             <div class='clarify'></div>
             {% include '_partial_messages.html' %}
