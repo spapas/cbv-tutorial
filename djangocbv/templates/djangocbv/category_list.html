@@ -13,6 +13,8 @@
         <tr>
             <th>Edit</th>
             <th>Title</th>
+            <th># articles</th>
+            <th># documents</th>
             <th>Add</th>
         </tr>
     </thead>
@@ -22,6 +24,8 @@
         
                 <td><a href='{% url "category-update" cat.id %}'>{{ cat.id }}</a></td>
                 <td>{{ cat.name }}</td>
+                <td>{{ cat.article_cnt }}</td>
+                <td>{{ cat.document_cnt }}</td>
                 <td>
                     <a href='{% url "article-create" %}?category={{ cat.id }}' >Article</a>
                     |

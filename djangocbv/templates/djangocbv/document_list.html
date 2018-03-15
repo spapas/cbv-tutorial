@@ -19,12 +19,19 @@
         padding: 5px 10px;
     }
     
+    .button {
+        line-height: 1.15;
+    }
     
 </style>
 {% endblock %}
 {% block content %}        
 
 <p>
+    <form method='GET'>
+        {{ filter.form }}
+        <input type='submit' value='Filter' />
+    </form>
     <a class='button' href='?csv=true'>Export csv</a>
 </p>
 

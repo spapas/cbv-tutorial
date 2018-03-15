@@ -109,6 +109,19 @@ class RemoveSuccessMessageMixin(SuccessMessagesMixin):
 
 class UnpublishSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully unpublished!'
+    
+
+class AddFilterMixin:
+    filter_class = None
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if not self.filter_class:
+            raise NotImplementedError("Please define filter_class when using AddFilterMixin")
+        filter = self.filter_class(self.request.GET, queryset=self.get_queryset())
+        ctx['filter'] = filter
+        ctx[self.context_object_name] = filter.qs
+        return ctx
 
 
 class ExportCsvMixin:
@@ -167,7 +180,7 @@ class ContentUpdateMixin(UpdateSuccessMessageMixin,
     pass
 
 
-class ContentListMixin(ExportCsvMixin, HideRemovedMixin, ):
+class ContentListMixin(ExportCsvMixin, AddFilterMixin, HideRemovedMixin, ):
     pass
 
 
@@ -181,8 +194,8 @@ class ContentRemoveMixin(AdminOrPublisherPermissionRequiredMixin,
 
 
 class ContentUnpublishMixin(AdminOrPublisherPermissionRequiredMixin,
-                         AuditableMixin,
-                         UnpublishSuccessMessageMixin,
-                         UnpublishMixin,):
+                            AuditableMixin,
+                            UnpublishSuccessMessageMixin,
+                            UnpublishMixin,):
     http_method_names = ['post',]
     fields = []

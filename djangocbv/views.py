@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Count
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
@@ -12,6 +13,7 @@ from core.mixins import DefaultHeaderMixin, DefaultContextMixin, UrlPatternsMixi
 
 from .models import Article, Category, Document
 from .forms import ArticleForm, DocumentForm
+from .filters import ArticleFilter, DocumentFilter
 from .mixins import *
 
 
@@ -70,7 +72,8 @@ class DefaultHeaderContextDjangoBetterCustomClassView(DefaultHeaderMixin, Defaul
 class ArticleListView(ContentListMixin, ListView):
     model = Article
     context_object_name = 'articles'
-
+    filter_class = ArticleFilter
+    
 
 class ArticleCreateView(ContentCreateMixin, RedirectToArticlesMixin, CreateView):
     model = Article
@@ -93,15 +96,19 @@ class ArticleDetailView(HideRemovedMixin, DetailView):
 
 class ArticleRemoveView(ContentRemoveMixin, RedirectToArticlesMixin, UpdateView):
     model = Article
-    
-    
+
+
 class ArticleUnpublishView(ContentUnpublishMixin, RedirectToArticlesMixin, UpdateView):
     model = Article
 
 
-class CategoryListView(ExportCsvMixin, ListView):
+class CategoryListView(ExportCsvMixin, AdminOrPublisherPermissionRequiredMixin, ListView):
     model = Category
     context_object_name = 'categories'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.annotate(article_cnt=Count('article'), document_cnt=Count('document'))
 
 
 class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
@@ -117,6 +124,7 @@ class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOr
 class DocumentListView(ContentListMixin, ListView):
     model = Document
     context_object_name = 'documents'
+    filter_class = DocumentFilter
 
 
 class DocumentCreateView(ContentCreateMixin, RedirectToDocumentsMixin, CreateView):
@@ -136,7 +144,7 @@ class DocumentDetailView(HideRemovedMixin, DetailView):
 
 class DocumentRemoveView(ContentRemoveMixin, RedirectToDocumentsMixin, UpdateView):
     model = Document
-    
-    
+
+
 class DocumentUnpublishView(ContentUnpublishMixin, RedirectToDocumentsMixin, UpdateView):
     model = Document
