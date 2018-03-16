@@ -154,7 +154,7 @@ class DocumentCreateView(ContentCreateMixin, CreateView):
     success_url = reverse_lazy('document-list')
 
 
-class DocumentUpdateView(ContentUpdateMixin, RedirectToDocumentsMixin, UpdateView):
+class DocumentUpdateView(ContentUpdateMixin, UpdateView):
     model = Document
     form_class = DocumentForm
     success_url = reverse_lazy('document-list')
