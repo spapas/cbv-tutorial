@@ -3,7 +3,9 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-import csv
+import csv, json
+
+from .models import Category
 
 
 class AuditableMixin:
@@ -109,6 +111,13 @@ class RemoveSuccessMessageMixin(SuccessMessagesMixin):
 
 class UnpublishSuccessMessageMixin(SuccessMessagesMixin):
     success_message = 'Object successfully unpublished!'
+
+    
+class CategoriesContextMixin:
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['categories'] = Category.objects.all()
+        return ctx    
     
 
 class AddFilterMixin:
@@ -138,6 +147,15 @@ class ExportCsvMixin:
 
             return response
         return super().render_to_response(context, **response_kwargs)
+        
+        
+class JsonDetailMixin:
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get('json'):
+            response = HttpResponse(content_type='application/json')
+            response.write(json.dumps(dict( (k,str(v)) for k,v in self.object.__dict__.items() )))
+            return response
+        return super().render_to_response(context, **response_kwargs)        
 
 
 class SetOwnerIfNeeded:
@@ -199,3 +217,5 @@ class ContentUnpublishMixin(AdminOrPublisherPermissionRequiredMixin,
                             UnpublishMixin,):
     http_method_names = ['post',]
     fields = []
+
+    

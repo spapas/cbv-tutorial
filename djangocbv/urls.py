@@ -25,6 +25,7 @@ urlpatterns = [
 
     path('categories/', views.CategoryListView.as_view(), name='category-list'),
     path('categories/create/', views.CategoryCreateView.as_view(), name='category-create'),
+    path('categories/detail/<int:pk>/', views.CategoryDetailView.as_view(), name='category-detail'),
     path('categories/update/<int:pk>/', views.CategoryUpdateView.as_view(), name='category-update'),
     
     re_path(r'^show/(?P<what>help|about)/', views.DynamicTemplateView.as_view(), name='template-show'),

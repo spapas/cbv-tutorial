@@ -17,13 +17,13 @@ from .filters import ArticleFilter, DocumentFilter
 from .mixins import *
 
 
-class DjangoHomeCustomClassView(UrlPatternsMixin, TemplateView, ):
+class DjangoHomeCustomClassView(UrlPatternsMixin, CategoriesContextMixin, TemplateView, ):
     template_name = 'django_cbv_home.html'
 
     def get_urlpatterns(self):
         from djangocbv.urls import urlpatterns
 
-        return [ p for p in urlpatterns if ':' not in p.pattern.describe()]
+        return [ p for p in urlpatterns if ':' not in p.pattern.describe() and '<' not in p.pattern.describe() ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -84,7 +84,7 @@ class ArticleUpdateView(ContentUpdateMixin, RedirectToArticlesMixin, UpdateView)
     model = Article
     form_class = ArticleForm
 
-class ArticleDetailView(HideRemovedMixin, DetailView):
+class ArticleDetailView(HideRemovedMixin, JsonDetailMixin, DetailView):
     model = Article
     context_object_name = 'article'
 
@@ -119,7 +119,17 @@ class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOr
 class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
     model = Category
     fields = ['name']
-
+    
+    
+class CategoryDetailView(CategoriesContextMixin, DetailView):
+    model = Category
+    context_object_name = 'category'
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['article_number'] = Article.objects.filter(category=self.object).count()
+        ctx['document_number'] = Document.objects.filter(category=self.object).count()
+        return ctx
 
 class DocumentListView(ContentListMixin, ListView):
     model = Document
@@ -137,7 +147,7 @@ class DocumentUpdateView(ContentUpdateMixin, RedirectToDocumentsMixin, UpdateVie
     form_class = DocumentForm
 
 
-class DocumentDetailView(HideRemovedMixin, DetailView):
+class DocumentDetailView(HideRemovedMixin, JsonDetailMixin, DetailView):
     model = Document
     context_object_name = 'document'
 

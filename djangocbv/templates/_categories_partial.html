@@ -1,0 +1,1 @@
+List of categories: {% for cat in categories %}<a href='{% url "category-detail" cat.id %}'>{{ cat }}</a>{% if not forloop.last %}|{% endif %}{% endfor %}
