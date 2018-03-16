@@ -34,12 +34,12 @@ class HideRemovedMixin:
 
 class ModerationMixin:
     def form_valid(self, form):
-        if self.object.status != 'REMOVED':
-            if self.request.user.has_perm('djangocbv.publisher_access') or self.request.user.has_perm('djangocbv.admin_access'):
-                self.object.status = 'PUBLISHED'
+        if form.instance.status != 'REMOVED':
+            if self.request.user.has_perm('djangocbv.publisher_access'):
+                form.instance.status = 'PUBLISHED'
             else:
-                self.object.status = 'DRAFT'
-
+                form.instance.status = 'DRAFT'
+        
         return super().form_valid(form)
 
 
