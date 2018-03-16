@@ -50,7 +50,7 @@ class SetInitialMixin(object,):
         return initial
 
 
-class SuccessMessagesMixin(object, ):
+class SuccessMessageMixin(object, ):
     success_message = ''
 
     def get_success_message(self):
@@ -81,38 +81,7 @@ class RequestArgMixin:
         kwargs.update({'request': self.request})
         return kwargs
 
-
-class RedirectToHomeMixin:
-    def get_success_url(self):
-        return reverse('home_django')
-
-
-class RedirectToArticlesMixin:
-    def get_success_url(self):
-        return reverse('article-list')
-
-
-class RedirectToDocumentsMixin:
-    def get_success_url(self):
-        return reverse('document-list')
-
-
-class CreateSuccessMessageMixin(SuccessMessagesMixin):
-    success_message = 'Object successfully created!'
-
-
-class UpdateSuccessMessageMixin(SuccessMessagesMixin):
-    success_message = 'Object successfully updated!'
-
-
-class RemoveSuccessMessageMixin(SuccessMessagesMixin):
-    success_message = 'Object successfully removed!'
-
-
-class UnpublishSuccessMessageMixin(SuccessMessagesMixin):
-    success_message = 'Object successfully unpublished!'
-
-    
+   
 class CategoriesContextMixin:
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -165,29 +134,27 @@ class SetOwnerIfNeeded:
         return super().form_valid(form)
 
 
-class RemoveMixin:
+class ChangeStatusMixin:
+    new_status = None 
+    
     def form_valid(self, form, ):
-        form.instance.status = 'REMOVED'
+        if not self.new_status:
+            raise NotImplementedError("Please define new_status when using ChangeStatusMixin")
+        form.instance.status = new_status
         return super().form_valid(form)
 
 
-class UnpublishMixin:
-    def form_valid(self, form, ):
-        form.instance.status = 'DRAFT'
-        return super().form_valid(form)
-
-
-class ContentCreateMixin(CreateSuccessMessageMixin,
+class ContentCreateMixin(SuccessMessageMixin,
                         AuditableMixin,
                         SetOwnerIfNeeded,
                         RequestArgMixin,
                         SetInitialMixin,
                         ModerationMixin,
                         LoginRequiredMixin):
-    pass
+    success_message = 'Object successfully created!'
 
 
-class ContentUpdateMixin(UpdateSuccessMessageMixin,
+class ContentUpdateMixin(SuccessMessageMixin,
                         AuditableMixin,
                         SetOwnerIfNeeded,
                         RequestArgMixin,
@@ -195,27 +162,29 @@ class ContentUpdateMixin(UpdateSuccessMessageMixin,
                         ModerationMixin,
                         LimitAccessMixin,
                         LoginRequiredMixin):
-    pass
+    success_message = 'Object successfully updated!'
 
 
 class ContentListMixin(ExportCsvMixin, AddFilterMixin, HideRemovedMixin, ):
     pass
 
 
-class ContentRemoveMixin(AdminOrPublisherPermissionRequiredMixin,
+class ContentRemoveMixin(SuccessMessageMixin,
+                         AdminOrPublisherPermissionRequiredMixin,
                          AuditableMixin,
-                         RemoveSuccessMessageMixin,
-                         HideRemovedMixin,
-                         RemoveMixin,):
+                         ChangeStatusMixin,):
     http_method_names = ['post',]
+    new_status = 'REMOVED'
     fields = []
+    success_message = 'Object successfully removed!'
 
 
-class ContentUnpublishMixin(AdminOrPublisherPermissionRequiredMixin,
+class ContentUnpublishMixin(SuccessMessageMixin,
+                            AdminOrPublisherPermissionRequiredMixin,
                             AuditableMixin,
-                            UnpublishSuccessMessageMixin,
-                            UnpublishMixin,):
+                            ChangeStatusMixin,):
     http_method_names = ['post',]
+    new_status = 'DRAFT'
     fields = []
-
+    success_message = 'Object successfully unpublished!'
     

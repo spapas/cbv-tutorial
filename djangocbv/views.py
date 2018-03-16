@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
 from django.views.generic.base import View
+from django.urls import reverse_lazy
 
 from core.views import HomeCustomClassView
 
@@ -73,16 +74,19 @@ class ArticleListView(ContentListMixin, ListView):
     model = Article
     context_object_name = 'articles'
     filter_class = ArticleFilter
-    
 
-class ArticleCreateView(ContentCreateMixin, RedirectToArticlesMixin, CreateView):
+
+class ArticleCreateView(ContentCreateMixin, CreateView):
     model = Article
     form_class = ArticleForm
+    success_url = reverse_lazy('article-list')
 
 
-class ArticleUpdateView(ContentUpdateMixin, RedirectToArticlesMixin, UpdateView):
+class ArticleUpdateView(ContentUpdateMixin, UpdateView):
     model = Article
     form_class = ArticleForm
+    success_url = reverse_lazy('article-list')
+
 
 class ArticleDetailView(HideRemovedMixin, JsonDetailMixin, DetailView):
     model = Article
@@ -94,12 +98,14 @@ class ArticleDetailView(HideRemovedMixin, JsonDetailMixin, DetailView):
         return super().get_template_names()
 
 
-class ArticleRemoveView(ContentRemoveMixin, RedirectToArticlesMixin, UpdateView):
+class ArticleRemoveView(ContentRemoveMixin, UpdateView):
     model = Article
+    success_url = reverse_lazy('article-list')
 
 
-class ArticleUnpublishView(ContentUnpublishMixin, RedirectToArticlesMixin, UpdateView):
+class ArticleUnpublishView(ContentUnpublishMixin, UpdateView):
     model = Article
+    success_url = reverse_lazy('article-list')
 
 
 class CategoryListView(ExportCsvMixin, AdminOrPublisherPermissionRequiredMixin, ListView):
@@ -111,25 +117,30 @@ class CategoryListView(ExportCsvMixin, AdminOrPublisherPermissionRequiredMixin, 
         return qs.annotate(article_cnt=Count('article'), document_cnt=Count('document'))
 
 
-class CategoryCreateView(CreateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
+class CategoryCreateView(SuccessMessageMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
     model = Category
     fields = ['name']
+    success_message = 'Category created!'
+    success_url = reverse_lazy('category-list')
 
 
-class CategoryUpdateView(UpdateSuccessMessageMixin, RedirectToHomeMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
+class CategoryUpdateView(SuccessMessageMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
     model = Category
     fields = ['name']
-    
-    
+    success_message = 'Category updated!'
+    success_url = reverse_lazy('category-list')
+
+
 class CategoryDetailView(CategoriesContextMixin, DetailView):
     model = Category
     context_object_name = 'category'
-    
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['article_number'] = Article.objects.filter(category=self.object).count()
         ctx['document_number'] = Document.objects.filter(category=self.object).count()
         return ctx
+
 
 class DocumentListView(ContentListMixin, ListView):
     model = Document
@@ -137,14 +148,16 @@ class DocumentListView(ContentListMixin, ListView):
     filter_class = DocumentFilter
 
 
-class DocumentCreateView(ContentCreateMixin, RedirectToDocumentsMixin, CreateView):
+class DocumentCreateView(ContentCreateMixin, CreateView):
     model = Document
     form_class = DocumentForm
+    success_url = reverse_lazy('document-list')
 
 
 class DocumentUpdateView(ContentUpdateMixin, RedirectToDocumentsMixin, UpdateView):
     model = Document
     form_class = DocumentForm
+    success_url = reverse_lazy('document-list')
 
 
 class DocumentDetailView(HideRemovedMixin, JsonDetailMixin, DetailView):
@@ -152,16 +165,17 @@ class DocumentDetailView(HideRemovedMixin, JsonDetailMixin, DetailView):
     context_object_name = 'document'
 
 
-class DocumentRemoveView(ContentRemoveMixin, RedirectToDocumentsMixin, UpdateView):
+class DocumentRemoveView(ContentRemoveMixin, UpdateView):
     model = Document
+    success_url = reverse_lazy('document-list')
 
 
-class DocumentUnpublishView(ContentUnpublishMixin, RedirectToDocumentsMixin, UpdateView):
+class DocumentUnpublishView(ContentUnpublishMixin, UpdateView):
     model = Document
+    success_url = reverse_lazy('document-list')
 
-    
+
 class DynamicTemplateView(TemplateView):
     def get_template_names(self):
         what = self.kwargs['what']
         return '{0}.html'.format(what)
-        
