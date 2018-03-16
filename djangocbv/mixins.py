@@ -140,7 +140,7 @@ class ChangeStatusMixin:
     def form_valid(self, form, ):
         if not self.new_status:
             raise NotImplementedError("Please define new_status when using ChangeStatusMixin")
-        form.instance.status = new_status
+        form.instance.status = self.new_status
         return super().form_valid(form)
 
 
