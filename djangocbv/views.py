@@ -68,6 +68,40 @@ class DjangoBetterCustomClassView(View, ):
 
 class DefaultHeaderContextDjangoBetterCustomClassView(DefaultHeaderMixin, DefaultContextMixin, DjangoBetterCustomClassView):
     pass
+    
+
+class CategoryListView(ExportCsvMixin, AdminOrPublisherPermissionRequiredMixin, ListView):
+    model = Category
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.annotate(article_cnt=Count('article'), document_cnt=Count('document'))
+
+
+class CategoryCreateView(SuccessMessageMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
+    model = Category
+    fields = ['name']
+    success_message = 'Category created!'
+    success_url = reverse_lazy('category-list')
+
+
+class CategoryUpdateView(SuccessMessageMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
+    model = Category
+    fields = ['name']
+    success_message = 'Category updated!'
+    success_url = reverse_lazy('category-list')
+
+
+class CategoryDetailView(CategoriesContextMixin, DetailView):
+    model = Category
+    context_object_name = 'category'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['article_number'] = Article.objects.filter(category=self.object).count()
+        ctx['document_number'] = Document.objects.filter(category=self.object).count()
+        return ctx    
 
 
 class ArticleListView(ContentListMixin, ListView):
@@ -106,40 +140,6 @@ class ArticleRemoveView(ContentRemoveMixin, UpdateView):
 class ArticleUnpublishView(ContentUnpublishMixin, UpdateView):
     model = Article
     success_url = reverse_lazy('article-list')
-
-
-class CategoryListView(ExportCsvMixin, AdminOrPublisherPermissionRequiredMixin, ListView):
-    model = Category
-    context_object_name = 'categories'
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.annotate(article_cnt=Count('article'), document_cnt=Count('document'))
-
-
-class CategoryCreateView(SuccessMessageMixin, AdminOrPublisherPermissionRequiredMixin, CreateView):
-    model = Category
-    fields = ['name']
-    success_message = 'Category created!'
-    success_url = reverse_lazy('category-list')
-
-
-class CategoryUpdateView(SuccessMessageMixin, AdminOrPublisherPermissionRequiredMixin, UpdateView):
-    model = Category
-    fields = ['name']
-    success_message = 'Category updated!'
-    success_url = reverse_lazy('category-list')
-
-
-class CategoryDetailView(CategoriesContextMixin, DetailView):
-    model = Category
-    context_object_name = 'category'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['article_number'] = Article.objects.filter(category=self.object).count()
-        ctx['document_number'] = Document.objects.filter(category=self.object).count()
-        return ctx
 
 
 class DocumentListView(ContentListMixin, ListView):
